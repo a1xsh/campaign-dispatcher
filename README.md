@@ -56,7 +56,6 @@ bundle exec rspec
 • Status enums stored in DB with defaults — avoids callback surprises  
 • DispatchCampaignJob updates only application state  
 • Turbo streams react to model commits — no UI logic in background jobs  
-• No over-abstraction for a 6-hour POC
 
 ### Future Improvements
 

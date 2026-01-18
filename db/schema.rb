@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_18_163710) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_18_174408) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "campaigns", force: :cascade do |t|
     t.string "title"
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -25,7 +25,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_18_163710) do
     t.bigint "campaign_id", null: false
     t.string "name"
     t.string "contact"
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_recipients_on_campaign_id"

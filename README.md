@@ -1,24 +1,52 @@
-# README
+# Campaign Dispatcher
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails application for automating customer feedback collection campaigns with real-time progress tracking.
 
-Things you may want to cover:
+## Prerequisites
 
-* Ruby version
+- Ruby 3.2.2+
+- PostgreSQL
+- Redis
 
-* System dependencies
+## Setup
 
-* Configuration
+### Docker (Recommended)
 
-* Database creation
+```bash
+docker-compose up
+```
 
-* Database initialization
+Application available at http://localhost:3000
 
-* How to run the test suite
+### Local Setup
 
-* Services (job queues, cache servers, search engines, etc.)
+1. Start PostgreSQL and Redis:
+   ```bash
+   docker-compose up -d postgres redis
+   ```
 
-* Deployment instructions
+2. Install dependencies and setup:
+   ```bash
+   bundle install
+   bin/rails db:create db:migrate
+   ```
 
-* ...
+3. Run:
+   ```bash
+   bin/dev
+   ```
+
+## Running Tests
+
+```bash
+bundle exec rspec
+```
+
+## Tech Stack
+
+- Ruby on Rails 7.2.3
+- PostgreSQL
+- Hotwire (Turbo & Stimulus)
+- Sidekiq + Redis
+- Tailwind CSS
+- RSpec

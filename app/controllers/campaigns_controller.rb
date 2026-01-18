@@ -36,21 +36,6 @@ class CampaignsController < ApplicationController
     campaign.update!(status: :processing)
     DispatchCampaignJob.perform_later(campaign.id)
 
-    campaign.reload
-    Turbo::StreamsChannel.broadcast_replace_to(
-      campaign,
-      target: "campaign_status",
-      partial: "campaigns/status",
-      locals: { campaign: }
-    )
-
-    Turbo::StreamsChannel.broadcast_replace_to(
-      campaign,
-      target: "start_button",
-      partial: "campaigns/start_button",
-      locals: { campaign: }
-    )
-
     redirect_to campaign
   end
 

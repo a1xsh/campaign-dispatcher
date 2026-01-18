@@ -8,9 +8,7 @@
       <div>
         <h1 class="text-2xl font-bold"><%= @campaign.title %></h1>
         <%= turbo_frame_tag "campaign_status" do %>
-          <div class="text-sm text-gray-600 mt-1">
-            Status: <%= @campaign.status %>
-          </div>
+          <%= render "status", campaign: @campaign %>
         <% end %>
       </div>
 

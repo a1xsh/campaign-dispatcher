@@ -20,7 +20,7 @@ class CampaignsController < ApplicationController
         contact = recipient_params[:contact]&.strip
         next if name.blank? || contact.blank?
 
-        @campaign.recipients.create!(name:, contact:, status: :queued)
+        @campaign.recipients.create!(name:, contact:)
       end
 
       redirect_to @campaign

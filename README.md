@@ -2,6 +2,8 @@
 
 Rails application for automating customer feedback collection campaigns with real-time progress tracking.
 
+![Screenshot](docs/screenshot.png)
+
 ## Prerequisites
 
 - Ruby 3.2.2+

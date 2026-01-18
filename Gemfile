@@ -50,6 +50,12 @@ group :development, :test do
 
   # RSpec for testing
   gem "rspec-rails", "~> 8.0"
+
+  # Capybara for system tests [https://github.com/teamcapybara/capybara]
+  gem "capybara", "~> 3.40"
+
+  # Selenium for browser automation [https://github.com/SeleniumHQ/selenium]
+  gem "selenium-webdriver", "~> 4.11"
 end
 
 group :development do

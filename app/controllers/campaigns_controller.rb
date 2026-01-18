@@ -1,16 +1,16 @@
 class CampaignsController < ApplicationController
+  before_action :set_campaign, only: [ :show, :start ]
   def index
     @campaigns = Campaign.order(created_at: :desc)
     @campaign = Campaign.new
   end
 
   def show
-    @campaign = Campaign.find(params[:id])
     @recipients = @campaign.recipients.order(:id)
   end
 
   def create
-    @campaign = Campaign.new(title: campaign_params[:title])
+    @campaign = Campaign.new(campaign_params)
     recipients_params = params[:campaign][:recipients] || []
 
     if @campaign.save
@@ -30,15 +30,18 @@ class CampaignsController < ApplicationController
   end
 
   def start
-    campaign = Campaign.find(params[:id])
-    return redirect_to campaign if campaign.processing? || campaign.completed?
+    return redirect_to @campaign if @campaign.processing? || @campaign.completed?
 
-    DispatchCampaignJob.perform_later(campaign.id)
+    DispatchCampaignJob.perform_later(@campaign)
 
-    redirect_to campaign
+    redirect_to @campaign
   end
 
   private
+
+  def set_campaign
+    @campaign = Campaign.find(params[:id])
+  end
 
   def campaign_params
     params.require(:campaign).permit(:title)

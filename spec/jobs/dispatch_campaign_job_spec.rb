@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DispatchCampaignJob, type: :job do
   describe '#perform' do
-    let(:campaign) { Campaign.create!(title: 'Test Campaign', status: :pending) }
+    let(:campaign) { Campaign.create!(title: 'Test Campaign') }
     let!(:recipient1) { Recipient.create!(campaign: campaign, name: 'John', contact: 'john@example.com', status: :queued) }
     let!(:recipient2) { Recipient.create!(campaign: campaign, name: 'Leo', contact: 'leo@example.com', status: :queued) }
 
@@ -12,13 +12,13 @@ RSpec.describe DispatchCampaignJob, type: :job do
 
     it 'processes all queued recipients' do
       expect {
-        DispatchCampaignJob.new.perform(campaign.id)
+        DispatchCampaignJob.new.perform(campaign)
       }.to change { recipient1.reload.status }.from('queued').to('sent')
         .and change { recipient2.reload.status }.from('queued').to('sent')
     end
 
     it 'updates campaign status to completed' do
-      DispatchCampaignJob.new.perform(campaign.id)
+      DispatchCampaignJob.new.perform(campaign)
 
       expect(campaign.reload.status).to eq('completed')
     end
@@ -26,7 +26,7 @@ RSpec.describe DispatchCampaignJob, type: :job do
     it 'broadcasts updates for each recipient' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_replace_to).at_least(:twice)
 
-      DispatchCampaignJob.new.perform(campaign.id)
+      DispatchCampaignJob.new.perform(campaign)
     end
 
     it 'broadcasts progress updates' do
@@ -37,13 +37,13 @@ RSpec.describe DispatchCampaignJob, type: :job do
         locals: { campaign: kind_of(Campaign) }
       ).at_least(:once)
 
-      DispatchCampaignJob.new.perform(campaign.id)
+      DispatchCampaignJob.new.perform(campaign)
     end
 
     it 'only processes queued recipients' do
       recipient3 = Recipient.create!(campaign: campaign, name: 'Tommy', contact: 'tommy@example.com', status: :sent)
 
-      DispatchCampaignJob.new.perform(campaign.id)
+      DispatchCampaignJob.new.perform(campaign)
 
       expect(recipient1.reload.status).to eq('sent')
       expect(recipient2.reload.status).to eq('sent')
@@ -59,12 +59,12 @@ RSpec.describe DispatchCampaignJob, type: :job do
         locals: { recipient: recipient1 }
       ).at_least(:once)
 
-      DispatchCampaignJob.new.perform(campaign.id)
+      DispatchCampaignJob.new.perform(campaign)
     end
 
     it 'simulates sending delay' do
       start_time = Time.current
-      DispatchCampaignJob.new.perform(campaign.id)
+      DispatchCampaignJob.new.perform(campaign)
       end_time = Time.current
 
       expect(end_time - start_time).to be >= 1
@@ -84,7 +84,7 @@ RSpec.describe DispatchCampaignJob, type: :job do
       end
 
       it 'marks recipient as failed' do
-        DispatchCampaignJob.new.perform(campaign.id)
+        DispatchCampaignJob.new.perform(campaign)
 
         expect(recipient1.reload.status).to eq('failed')
         expect(recipient2.reload.status).to eq('failed')
@@ -94,23 +94,23 @@ RSpec.describe DispatchCampaignJob, type: :job do
         # Allow broadcasts from after_commit callbacks
         allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to).and_call_original
 
-        DispatchCampaignJob.new.perform(campaign.id)
+        DispatchCampaignJob.new.perform(campaign)
 
         expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).at_least(:twice)
       end
 
       it 'still completes the campaign even if some recipients fail' do
-        DispatchCampaignJob.new.perform(campaign.id)
+        DispatchCampaignJob.new.perform(campaign)
 
         expect(campaign.reload.status).to eq('completed')
       end
     end
 
     context 'with no recipients' do
-      let(:empty_campaign) { Campaign.create!(title: 'Empty Campaign', status: :pending) }
+      let(:empty_campaign) { Campaign.create!(title: 'Empty Campaign') }
 
       it 'completes immediately' do
-        DispatchCampaignJob.new.perform(empty_campaign.id)
+        DispatchCampaignJob.new.perform(empty_campaign)
 
         expect(empty_campaign.reload.status).to eq('completed')
       end

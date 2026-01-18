@@ -1,17 +1,16 @@
 class DispatchCampaignJob < ApplicationJob
   queue_as :default
 
-  def perform(campaign_id)
-    campaign = Campaign.find(campaign_id)
-    campaign.update!(status: :processing)
+  def perform(campaign)
+    campaign.processing!
 
-    campaign.recipients.queued.find_each do |recipient|
+    campaign.recipients.queued.each do |recipient|
       sleep(rand(1..3))
-      recipient.update!(status: :sent)
+      recipient.sent!
     rescue => e
-      recipient.update!(status: :failed)
+      recipient.failed!
     end
 
-    campaign.update!(status: :completed)
+    campaign.completed!
   end
 end

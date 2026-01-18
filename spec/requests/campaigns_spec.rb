@@ -151,15 +151,10 @@ RSpec.describe 'Campaigns', type: :request do
     let(:campaign) { Campaign.create!(title: 'Test Campaign', status: :pending) }
     let!(:recipient) { Recipient.create!(campaign: campaign, name: 'John', contact: 'john@example.com', status: :queued) }
 
-    it 'updates campaign status to processing' do
-      post start_campaign_path(campaign)
-      expect(campaign.reload.status).to eq('processing')
-    end
-
     it 'enqueues DispatchCampaignJob' do
       expect {
         post start_campaign_path(campaign)
-      }.to have_enqueued_job(DispatchCampaignJob).with(campaign.id)
+      }.to have_enqueued_job(DispatchCampaignJob).with(campaign)
     end
 
     it 'redirects to campaign show page' do

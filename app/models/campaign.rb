@@ -5,7 +5,6 @@ class Campaign < ApplicationRecord
 
   validates :title, presence: true
 
-  after_initialize :set_default_status, if: :new_record?
   after_update_commit -> { CampaignBroadcaster.call(self) }
 
   def sent_count
@@ -14,11 +13,5 @@ class Campaign < ApplicationRecord
 
   def total_count
     recipients.count
-  end
-
-  private
-
-  def set_default_status
-    self.status ||= :pending
   end
 end

@@ -1,5 +1,6 @@
 class CampaignsController < ApplicationController
   before_action :set_campaign, only: [ :show, :start ]
+
   def index
     @campaigns = Campaign.order(created_at: :desc)
     @campaign = Campaign.new

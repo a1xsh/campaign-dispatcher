@@ -64,3 +64,10 @@ bundle exec rspec
 • Counter cache for large campaigns  
 • API endpoints for non-Hotwire clients  
 • Stronger error handling and retries
+
+## Summary
+
+- Failures are isolated at the recipient level and do not cascade across the campaign.
+- Background jobs are retry-safe and idempotent by design.
+- The database schema is normalized, indexed, and efficient for progress tracking.
+- Complexity is intentionally deferred until it is justified by scale.

@@ -10,7 +10,7 @@ class CampaignsController < ApplicationController
   end
 
   def create
-    @campaign = Campaign.new(title: campaign_params[:title], status: :pending)
+    @campaign = Campaign.new(title: campaign_params[:title])
     recipients_params = params[:campaign][:recipients] || []
 
     if @campaign.save
@@ -33,7 +33,6 @@ class CampaignsController < ApplicationController
     campaign = Campaign.find(params[:id])
     return redirect_to campaign if campaign.processing? || campaign.completed?
 
-    campaign.update!(status: :processing)
     DispatchCampaignJob.perform_later(campaign.id)
 
     redirect_to campaign

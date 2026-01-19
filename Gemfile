@@ -55,7 +55,7 @@ group :development, :test do
   gem "capybara", "~> 3.40"
 
   # Selenium for browser automation [https://github.com/SeleniumHQ/selenium]
-  gem "selenium-webdriver", "~> 4.11"
+  gem "selenium-webdriver", "~> 4.40"
 end
 
 group :development do
